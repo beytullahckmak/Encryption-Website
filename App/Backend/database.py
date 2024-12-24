@@ -12,14 +12,25 @@ def init_db():
     if not os.path.exists(DATABASE_FILE):
         conn = get_db_connection()
         cursor = conn.cursor()
+        
         cursor.execute("""
-            CREATE TABLE users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL
-            )
-        """)
+        CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+    )
+""")
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS passwords (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            password_name TEXT NOT NULL,
+            secure_password TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+    )""")
+        
         conn.commit()
         conn.close()
         print("Database and 'users' table created successfully!")
+        

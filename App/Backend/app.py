@@ -4,16 +4,19 @@ from auth import auth_bp
 import secrets
 import string
 from flask_session import Session
-
+from page import page_bp
 
 
 app = Flask(__name__)
+app.secret_key = "LtWFAlkN/HIlq6U2W4nAbQ"  # Güvenli bir gizli anahtar kullanın
 
-app.secret_key="LtWFAlkN/HIlq6U2W4nAbQ"
-app.config["SESSION_TYPE"] = "filesystem"
+# Flask-Session yapılandırması
+app.config["SESSION_TYPE"] = "filesystem"  # Oturumları dosya tabanlı olarak saklar
+app.config["SESSION_PERMANENT"] = False
 Session(app)
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(page_bp)
 
 def generate_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -29,5 +32,5 @@ def generate_password_endpoint():
 
 
 if __name__ == "__main__":
-    init_db()  
+    init_db()
     app.run(debug=True)

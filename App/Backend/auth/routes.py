@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify
+from flask import Flask,request,jsonify,session
 import sqlite3
 from . import auth_bp
 from .security import hash_password,verify_password 
@@ -56,7 +56,7 @@ def login_user():
         if user and verify_password(password, user[3]):  # Şifre doğrulama
             session['user_id'] = user[0]
             session['username'] = user[1]
-            return jsonify({"message": "Giriş başarılı!", "username": user[1]}), 200
+            return jsonify({"message": "Giriş başarılı!", "username": user[1] , "session":session['user_id']}), 200
         else:
             return jsonify({"error": "E-posta veya şifre hatalı."}), 401
     except Exception as e:
@@ -65,6 +65,9 @@ def login_user():
     
 @auth_bp.route('/logout', methods=['POST'])
 def logout_user():
+    if 'user_id' not in session:  # Kullanıcı oturumu yoksa
+        return jsonify({"error": "Kullanıcı giriş yapmamış."}), 401
+    
     session.clear()  # Tüm oturum bilgilerini temizle
     return jsonify({"message": "Çıkış başarılı!"}), 200
 
