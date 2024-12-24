@@ -1,10 +1,17 @@
-from flask import Flask,jsonify
+from flask import Flask,jsonify,session
 from database import init_db  # Veritabanını başlatmak için init_db fonksiyonu ekleniyor
 from auth import auth_bp
 import secrets
 import string
+from flask_session import Session
+
+
 
 app = Flask(__name__)
+
+app.secret_key="LtWFAlkN/HIlq6U2W4nAbQ"
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 app.register_blueprint(auth_bp)
 

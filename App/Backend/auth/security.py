@@ -1,6 +1,5 @@
 import bcrypt
 
-# Şifreyi hashleyen fonksiyon
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()  # Rastgele bir salt oluşturur
     hashed = bcrypt.hashpw(password.encode(), salt)  # Şifreyi hashler
@@ -9,7 +8,3 @@ def hash_password(password: str) -> str:
 # Şifre doğrulama fonksiyonu
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
-
-
-
-
