@@ -6,10 +6,11 @@ from flask_session import Session
 @page_bp.route('/passwords', methods=['GET'])
 def get_passwords():
     if 'user_id' not in session:
+        print(f"Session data: {session}")  # Session bilgilerini loglayın
         return jsonify({"error": "Yetkisiz erişim. Lütfen giriş yapın."}), 401
 
-    user_id = session['user_id']
-
+    user_id = session.get['user_id']
+    
     try:
         conn = sqlite3.connect('app.db', timeout=10)
         conn.row_factory = sqlite3.Row  # Burada `row_factory`'yi sözlük gibi kullanıyoruz
