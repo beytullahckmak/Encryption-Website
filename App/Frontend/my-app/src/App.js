@@ -30,15 +30,6 @@ function App() {
     setLoading(false); // Kontrol tamamlandığında yükleniyor durumu false
   }, []);
  
-    // Session bilgilerini al
-    axios.get('http://127.0.0.1:5000/auth/get-session', { withCredentials: true })
-  .then(response => {
-    console.log("Session verisi:", response.data);
-    // Kullanıcı bilgilerini frontend'de kullan
-  })
-  .catch(error => {
-    console.error("Session alınırken hata:", error.response.data);
-  });
  
 
   const location = useLocation();
