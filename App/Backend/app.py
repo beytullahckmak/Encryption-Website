@@ -5,14 +5,14 @@ import secrets
 import string
 from flask_session import Session
 from page import page_bp
+from flask_cors import CORS
 
 
 app = Flask(__name__)
-app.secret_key = "LtWFAlkN/HIlq6U2W4nAbQ"  # Güvenli bir gizli anahtar kullanın
+CORS(app, supports_credentials=True)  # credentials desteği ekleniyor
 
-# Flask-Session yapılandırması
-app.config["SESSION_TYPE"] = "filesystem"  # Oturumları dosya tabanlı olarak saklar
-app.config["SESSION_PERMANENT"] = False
+app.secret_key = "LtWFAlkN/HIlq6U2W4nAbQ"  # Güvenli bir gizli anahtar kullanın
+app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 app.register_blueprint(auth_bp)

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
-function Login({ users, setCurrentUser }) {
+function Login({ setCurrentUser, setIsLoggedIn }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -10,36 +11,53 @@ function Login({ users, setCurrentUser }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const user = users.find(
-      (user) => user.email === formData.email && user.password === formData.password
-    );
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/auth/login", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (user) {
-      setCurrentUser(user);
-      navigate('/');
-    } else {
-      setErrorMessage("E-posta veya şifre yanlış. Lütfen tekrar deneyin.");
+      if (response.status === 200) {
+        alert("Giriş başarılı!");
+        localStorage.setItem("currentUser", JSON.stringify({
+          username: response.data.username,
+          sessionId: response.data.session
+        }));
+        localStorage.setItem("isLoggedIn", "true");
+        setCurrentUser(response.data.username);
+        setIsLoggedIn(true);  // Oturum açıldığını belirt
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error.response && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage("Sunucuya bağlanırken bir hata oluştu.");
+      }
     }
   };
+  
 
   return (
     <div>
       <div style={{ 
-                position: "fixed", 
-                top: "20px", 
-                right: "20px", 
-                display: "flex", 
-                gap: "10px" 
-              }}>
-                <Link to="/">
-                  <button style={{borderRadius:'6px', padding: "10px 20px" }}>Home</button>
-                </Link>
-                <Link to="/auth/register">
-                  <button style={{borderRadius:'6px', padding: "10px 20px" }}>Register</button>
-                </Link>
+        position: "fixed", 
+        top: "20px", 
+        right: "20px", 
+        display: "flex", 
+        gap: "10px" 
+      }}>
+        <Link to="/">
+          <button style={{ borderRadius: '6px', padding: "10px 20px" }}>Home</button>
+        </Link>
+        <Link to="/auth/register">
+          <button style={{ borderRadius: '6px', padding: "10px 20px" }}>Register</button>
+        </Link>
       </div>
 
       <div>
@@ -65,15 +83,15 @@ function Login({ users, setCurrentUser }) {
         </form>
 
         {errorMessage && (
-            <div style={{
-              color: "red",
-              fontSize: "12px",
-              marginTop: "10px",
-              wordWrap: "break-word",
-              whiteSpace: "normal"
-            }}>
-              {errorMessage}
-            </div>
+          <div style={{
+            color: "red",
+            fontSize: "12px",
+            marginTop: "10px",
+            wordWrap: "break-word",
+            whiteSpace: "normal"
+          }}>
+            {errorMessage}
+          </div>
         )}
       </div>
     </div>
